@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automatización de Procesos Industriales y de Servicios</title>
+<style>
+  :root{
+    --bg:#050706;
+    --bg-panel:#0a0f0c;
+    --green:#39ff8f;
+    --green-dim:#1c7a4c;
+    --blue:#3ad6ff;
+    --blue-dim:#1a6b8a;
+    --text:#d9f5e6;
+    --text-dim:#7fa896;
+    --line: rgba(57,255,143,0.25);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Courier New', 'Consolas', monospace;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  /* ---------- fondo con ruido/scanlines ---------- */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(57,255,143,0.03) 0px, rgba(57,255,143,0.03) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+    z-index:2;
+    mix-blend-mode:screen;
+  }
+
+  @font-face{
+    font-family:'DisplayFallback';
+    src:local('Arial Black');
+  }
+
+  h1,h2,h3{
+    font-family:'Arial Black', 'Arial', sans-serif;
+    letter-spacing:0.5px;
+  }
+
+  /* ================= GLITCH TEXT ================= */
+  .glitch{
+    position:relative;
+    color:var(--text);
+    display:inline-block;
+  }
+  .glitch::before,
+  .glitch::after{
+    content: attr(data-text);
+    position:absolute;
+    left:0; top:0;
+    width:100%;
+    overflow:hidden;
+    background:var(--bg);
+  }
+  .glitch::before{
+    color:var(--blue);
+    clip-path: inset(0 0 60% 0);
+    animation: glitch-top 4.5s infinite linear;
+  }
+  .glitch::after{
+    color:var(--green);
+    clip-path: inset(60% 0 0 0);
+    animation: glitch-bottom 4.5s infinite linear;
+  }
+  @keyframes glitch-top{
+    0%, 88%, 100%{ transform:translate(0,0); }
+    89%{ transform:translate(-3px,-1px); }
+    90%{ transform:translate(3px,1px); }
+    91%{ transform:translate(-2px,0); }
+    92%{ transform:translate(0,0); }
+  }
+  @keyframes glitch-bottom{
+    0%, 88%, 100%{ transform:translate(0,0); }
+    89%{ transform:translate(3px,1px); }
+    90%{ transform:translate(-3px,-1px); }
+    91%{ transform:translate(2px,0); }
+    92%{ transform:translate(0,0); }
+  }
+
+  /* ================= HEADER / PORTADA ================= */
+  .portada{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding: 2rem 1.25rem;
+    z-index:1;
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(58,214,255,0.10), transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(57,255,143,0.10), transparent 55%),
+      var(--bg);
+  }
+
+  .portada .grid-lines{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 42px 42px;
+    opacity:0.35;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 78%);
+  }
+
+  .tag{
+    position:relative;
+    font-size:0.75rem;
+    letter-spacing:3px;
+    color:var(--blue);
+    border:1px solid var(--blue-dim);
+    padding:0.35rem 0.9rem;
+    border-radius:2px;
+    margin-bottom:1.75rem;
+    background:rgba(58,214,255,0.05);
+  }
+
+  .portada h1{
+    position:relative;
+    font-size: clamp(2rem, 6vw, 4.2rem);
+    line-height:1.08;
+    max-width:16ch;
+    text-shadow: 0 0 22px rgba(57,255,143,0.25);
+  }
+
+  .portada .subline{
+    position:relative;
+    margin-top:1.6rem;
+    font-size:0.95rem;
+    color:var(--text-dim);
+    max-width:38ch;
+  }
+
+  .autor-box{
+    position:relative;
+    margin-top:3rem;
+    padding:1.1rem 1.6rem;
+    border:1px solid var(--green-dim);
+    background:rgba(57,255,143,0.04);
+    text-align:left;
+    max-width:420px;
+    width:100%;
+  }
+  .autor-box .label{
+    font-size:0.68rem;
+    letter-spacing:2px;
+    color:var(--text-dim);
+    text-transform:uppercase;
+  }
+  .autor-box .nombre{
+    font-size:1.15rem;
+    color:var(--green);
+    margin:0.4rem 0 0.6rem;
+    font-weight:bold;
+  }
+  .autor-box .escuela{
+    font-size:0.85rem;
+    color:var(--text);
+  }
+  .autor-box .esp{
+    color:var(--blue);
+  }
+
+  .scroll-hint{
+    position:absolute;
+    bottom:2rem;
+    font-size:0.7rem;
+    letter-spacing:3px;
+    color:var(--text-dim);
+    animation: blink 1.8s infinite steps(1);
+  }
+  @keyframes blink{
+    0%,49%{opacity:1;}
+    50%,100%{opacity:0.15;}
+  }
+
+  /* ================= SECCIONES GENERALES ================= */
+  section{
+    position:relative;
+    z-index:1;
+    padding: 4.5rem 1.25rem;
+    max-width:960px;
+    margin:0 auto;
+  }
+
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:0.75rem;
+    margin-bottom:2rem;
+    border-bottom:1px solid var(--line);
+    padding-bottom:0.9rem;
+  }
+  .section-head .bar{
+    width:10px; height:10px;
+    background:var(--green);
+    box-shadow:0 0 10px var(--green);
+    flex-shrink:0;
+  }
+  .section-head h2{
+    font-size:clamp(1.4rem, 3.2vw, 2rem);
+    color:var(--text);
+  }
+
+  /* ---------- Introducción ---------- */
+  .intro p{
+    font-size:1rem;
+    color:var(--text);
+    margin-bottom:1.2rem;
+    max-width:72ch;
+  }
+  .intro p:last-child{margin-bottom:0;}
+
+  .destacado{
+    text-decoration: underline;
+    text-decoration-color: var(--green);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    color:var(--green);
+  }
+  .destacado.azul{
+    text-decoration-color: var(--blue);
+    color:var(--blue);
+  }
+
+  /* ---------- Catálogo ---------- */
+  .catalogo-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap:1.4rem;
+  }
+
+  .card{
+    position:relative;
+    background:var(--bg-panel);
+    border:1px solid var(--green-dim);
+    padding:1.4rem 1.2rem 1.6rem;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  .card:hover{
+    border-color:var(--blue);
+    transform: translateY(-4px);
+  }
+  .card .num{
+    font-size:0.7rem;
+    letter-spacing:2px;
+    color:var(--text-dim);
+  }
+  .card .icon-wrap{
+    width:100%;
+    aspect-ratio: 4 / 3;
+    margin:0.9rem 0 1.1rem;
+    background:
+      linear-gradient(135deg, rgba(57,255,143,0.07), rgba(58,214,255,0.07));
+    border:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .card svg{
+    width:58%;
+    height:58%;
+  }
+  .card h3{
+    font-size:1.05rem;
+    color:var(--text);
+    margin-bottom:0.5rem;
+  }
+  .card p{
+    font-size:0.85rem;
+    color:var(--text-dim);
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    text-align:center;
+    padding:2rem 1.25rem 3rem;
+    font-size:0.72rem;
+    letter-spacing:1.5px;
+    color:var(--text-dim);
+    border-top:1px solid var(--line);
+  }
+  footer span{color:var(--green);}
+
+  /* ---------- Responsivo móvil ---------- */
+  @media (max-width:600px){
+    .portada{min-height:100svh; padding:1.5rem 1rem;}
+    section{padding:3rem 1rem;}
+    .autor-box{padding:1rem 1.1rem;}
+    .catalogo-grid{grid-template-columns:1fr 1fr; gap:0.9rem;}
+    .card{padding:1rem 0.9rem 1.2rem;}
+  }
+  @media (max-width:400px){
+    .catalogo-grid{grid-template-columns:1fr;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .glitch::before,.glitch::after{animation:none;}
+    .scroll-hint{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== PORTADA ===================== -->
+<header class="portada">
+  <div class="grid-lines"></div>
+  <span class="tag">CBTIS 144 · ESPECIALIDAD DE IA</span>
+
+  <h1 class="glitch" data-text="Automatización de procesos industriales y de servicios">
+    Automatización de procesos industriales y de servicios
+  </h1>
+
+  <p class="subline">Fundamentos, componentes y aplicaciones de la automatización moderna en la industria y los servicios.</p>
+
+  <div class="autor-box">
+    <div class="label">Trabajo realizado por</div>
+    <div class="nombre">Cristian Eduardo Niños Molina</div>
+    <div class="escuela">Especialidad de <span class="esp">Inteligencia Artificial</span> · CBTIS 144</div>
+  </div>
+
+  <div class="scroll-hint">DESPLÁZATE ↓</div>
+</header>
+
+<!-- ===================== INTRODUCCIÓN ===================== -->
+<section class="intro" id="introduccion">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Introducción a los fundamentos de la automatización</h2>
+  </div>
+
+  <p>
+    La automatización de procesos industriales y de servicios consiste en el uso de
+    <span class="destacado">sistemas de control</span> y tecnologías digitales para ejecutar tareas que antes requerían
+    intervención humana directa, con el objetivo de aumentar la <span class="destacado azul">precisión</span>, reducir
+    tiempos de operación y disminuir errores.
+  </p>
+
+  <p>
+    Un proceso automatizado se compone de tres elementos básicos: los
+    <span class="destacado">sensores</span>, que perciben el estado del entorno; los
+    <span class="destacado azul">controladores</span>, que procesan esa información y toman decisiones; y los
+    <span class="destacado">actuadores</span>, que ejecutan la acción física sobre el sistema.
+  </p>
+
+  <p>
+    Actualmente estos principios se aplican tanto en líneas de producción industrial como en
+    <span class="destacado azul">servicios</span> —bancos, hospitales, logística—, integrando
+    <span class="destacado">inteligencia artificial</span> para optimizar decisiones en tiempo real y anticipar fallos
+    antes de que ocurran.
+  </p>
+</section>
+
+<!-- ===================== CATÁLOGO ===================== -->
+<section id="catalogo">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Catálogo de temas</h2>
+  </div>
+
+  <div class="catalogo-grid">
+
+    <!-- Card 1: Sensores -->
+    <article class="card">
+      <span class="num">01</span>
+      <div class="icon-wrap">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="10" stroke="#39ff8f" stroke-width="3"/>
+          <circle cx="50" cy="50" r="24" stroke="#3ad6ff" stroke-width="2" stroke-dasharray="4 5"/>
+          <circle cx="50" cy="50" r="38" stroke="#39ff8f" stroke-width="1.5" opacity="0.5"/>
+          <line x1="50" y1="12" x2="50" y2="2" stroke="#3ad6ff" stroke-width="3"/>
+          <line x1="50" y1="98" x2="50" y2="88" stroke="#3ad6ff" stroke-width="3"/>
+          <line x1="12" y1="50" x2="2" y2="50" stroke="#3ad6ff" stroke-width="3"/>
+          <line x1="98" y1="50" x2="88" y2="50" stroke="#3ad6ff" stroke-width="3"/>
+        </svg>
+      </div>
+      <h3>1. Sensores y transductores</h3>
+      <p>Dispositivos que detectan variables físicas del entorno y las convierten en señales interpretables.</p>
+    </article>
+
+    <!-- Card 2: Actuadores -->
+    <article class="card">
+      <span class="num">02</span>
+      <div class="icon-wrap">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="20" width="14" height="60" rx="2" stroke="#3ad6ff" stroke-width="3"/>
+          <rect x="56" y="35" width="14" height="45" rx="2" stroke="#39ff8f" stroke-width="3"/>
+          <line x1="20" y1="80" x2="80" y2="80" stroke="#39ff8f" stroke-width="3"/>
+          <path d="M37 20 L37 8" stroke="#3ad6ff" stroke-width="3"/>
+          <path d="M30 8 L44 8" stroke="#3ad6ff" stroke-width="3"/>
+        </svg>
+      </div>
+      <h3>2. Actuadores</h3>
+      <p>Elementos mecánicos, hidráulicos, neumáticos o eléctricos que ejecutan el movimiento o la acción ordenada.</p>
+    </article>
+
+    <!-- Card 3: PLC / Controladores -->
+    <article class="card">
+      <span class="num">03</span>
+      <div class="icon-wrap">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="18" y="18" width="64" height="64" rx="3" stroke="#39ff8f" stroke-width="3"/>
+          <path d="M32 50 L44 50 L48 38 L54 62 L58 50 L68 50" stroke="#3ad6ff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="18" cy="30" r="2.5" fill="#39ff8f"/>
+          <circle cx="18" cy="50" r="2.5" fill="#39ff8f"/>
+          <circle cx="18" cy="70" r="2.5" fill="#39ff8f"/>
+          <circle cx="82" cy="30" r="2.5" fill="#3ad6ff"/>
+          <circle cx="82" cy="50" r="2.5" fill="#3ad6ff"/>
+          <circle cx="82" cy="70" r="2.5" fill="#3ad6ff"/>
+        </svg>
+      </div>
+      <h3>3. Controladores (PLC)</h3>
+      <p>Unidades de control programable que procesan las señales de entrada y generan las órdenes de salida.</p>
+    </article>
+
+    <!-- Card 4: SCADA -->
+    <article class="card">
+      <span class="num">04</span>
+      <div class="icon-wrap">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="14" y="24" width="72" height="42" rx="2" stroke="#3ad6ff" stroke-width="3"/>
+          <line x1="38" y1="66" x2="38" y2="76" stroke="#3ad6ff" stroke-width="3"/>
+          <line x1="62" y1="66" x2="62" y2="76" stroke="#3ad6ff" stroke-width="3"/>
+          <line x1="26" y1="80" x2="74" y2="80" stroke="#39ff8f" stroke-width="3"/>
+          <polyline points="22,54 34,40 44,48 58,32 78,44" stroke="#39ff8f" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h3>4. Sistemas SCADA</h3>
+      <p>Plataformas de supervisión, control y adquisición de datos que monitorean el proceso en tiempo real.</p>
+    </article>
+
+  </div>
+</section>
+
+<footer>
+  <span>CBTIS 144</span> · Especialidad de IA · Cristian Eduardo Niños Molina
+</footer>
+
+</body>
+</html>
