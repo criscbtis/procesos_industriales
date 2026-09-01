@@ -247,14 +247,38 @@
 
   .card{
     position:relative;
+    display:block;
     background:var(--bg-panel);
     border:1px solid var(--green-dim);
     padding:1.4rem 1.2rem 1.6rem;
-    transition: border-color 0.25s ease, transform 0.25s ease;
+    text-decoration:none;
+    color:inherit;
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
   }
-  .card:hover{
+  .card:hover,
+  .card:focus-visible{
     border-color:var(--blue);
     transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(58,214,255,0.12);
+  }
+  .card:focus-visible{
+    outline:2px solid var(--blue);
+    outline-offset:3px;
+  }
+  .card .ver-mas{
+    display:inline-flex;
+    align-items:center;
+    gap:0.4rem;
+    margin-top:0.9rem;
+    font-size:0.78rem;
+    letter-spacing:1px;
+    color:var(--blue);
+  }
+  .card .ver-mas .arrow{
+    transition: transform 0.25s ease;
+  }
+  .card:hover .ver-mas .arrow{
+    transform: translateX(4px);
   }
   .card .num{
     font-size:0.7rem;
@@ -376,7 +400,7 @@
   <div class="catalogo-grid">
 
     <!-- Card 1: Sensores -->
-    <article class="card">
+    <a class="card" href="tema-1.html">
       <span class="num">01</span>
       <div class="icon-wrap">
         <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -391,10 +415,11 @@
       </div>
       <h3>1. Sensores y transductores</h3>
       <p>Dispositivos que detectan variables físicas del entorno y las convierten en señales interpretables.</p>
-    </article>
+      <span class="ver-mas">Ver más <span class="arrow">→</span></span>
+    </a>
 
     <!-- Card 2: Actuadores -->
-    <article class="card">
+    <a class="card" href="tema-2.html">
       <span class="num">02</span>
       <div class="icon-wrap">
         <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -407,10 +432,11 @@
       </div>
       <h3>2. Actuadores</h3>
       <p>Elementos mecánicos, hidráulicos, neumáticos o eléctricos que ejecutan el movimiento o la acción ordenada.</p>
-    </article>
+      <span class="ver-mas">Ver más <span class="arrow">→</span></span>
+    </a>
 
     <!-- Card 3: PLC / Controladores -->
-    <article class="card">
+    <a class="card" href="tema-3.html">
       <span class="num">03</span>
       <div class="icon-wrap">
         <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -426,10 +452,11 @@
       </div>
       <h3>3. Controladores (PLC)</h3>
       <p>Unidades de control programable que procesan las señales de entrada y generan las órdenes de salida.</p>
-    </article>
+      <span class="ver-mas">Ver más <span class="arrow">→</span></span>
+    </a>
 
     <!-- Card 4: SCADA -->
-    <article class="card">
+    <a class="card" href="tema-4.html">
       <span class="num">04</span>
       <div class="icon-wrap">
         <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -442,7 +469,8 @@
       </div>
       <h3>4. Sistemas SCADA</h3>
       <p>Plataformas de supervisión, control y adquisición de datos que monitorean el proceso en tiempo real.</p>
-    </article>
+      <span class="ver-mas">Ver más <span class="arrow">→</span></span>
+    </a>
 
   </div>
 </section>
