@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conceptos Básicos de Automatización</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#050708;
+    --bg-panel:#0a0d0f;
+    --green:#39ff9d;
+    --blue:#33b6ff;
+    --text:#dfe8e6;
+    --muted:#7c8c89;
+    --line:#1c2426;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight:300;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image:
+      linear-gradient(rgba(57,255,157,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(51,182,255,0.025) 1px, transparent 1px);
+    background-size:38px 38px;
+    z-index:0;
+  }
+
+  .wrap{
+    position:relative;
+    z-index:1;
+    max-width:880px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    padding:80px 0 56px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+  }
+
+  .glitch{
+    font-family:'Space Mono', monospace;
+    font-weight:700;
+    font-size:clamp(2rem, 6vw, 3.4rem);
+    letter-spacing:-0.01em;
+    color:var(--text);
+    position:relative;
+    display:inline-block;
+    animation:flicker 6s infinite;
+  }
+
+  .glitch::before,
+  .glitch::after{
+    content:attr(data-text);
+    position:absolute;
+    left:0; top:0;
+    width:100%;
+    overflow:hidden;
+    background:var(--bg);
+  }
+
+  .glitch::before{
+    color:var(--green);
+    animation:glitchTop 4.5s infinite linear;
+    clip-path:inset(0 0 60% 0);
+  }
+
+  .glitch::after{
+    color:var(--blue);
+    animation:glitchBottom 5.5s infinite linear;
+    clip-path:inset(60% 0 0 0);
+  }
+
+  @keyframes glitchTop{
+    0%,88%,100%{transform:translate(0,0); opacity:0;}
+    89%{transform:translate(-3px,-1px); opacity:1;}
+    90%{transform:translate(2px,1px); opacity:1;}
+    91%{transform:translate(-1px,0); opacity:1;}
+    92%{opacity:0;}
+  }
+
+  @keyframes glitchBottom{
+    0%,86%,100%{transform:translate(0,0); opacity:0;}
+    87%{transform:translate(3px,1px); opacity:1;}
+    88%{transform:translate(-2px,-1px); opacity:1;}
+    89%{transform:translate(1px,0); opacity:1;}
+    90.5%{opacity:0;}
+  }
+
+  @keyframes flicker{
+    0%,95%,100%{opacity:1;}
+    96%{opacity:0.85;}
+    97%{opacity:1;}
+  }
+
+  .byline{
+    margin-top:22px;
+    font-family:'Space Mono', monospace;
+    font-size:0.82rem;
+    color:var(--muted);
+  }
+
+  .byline strong{
+    color:var(--green);
+    font-weight:400;
+  }
+
+  .byline .school{
+    color:var(--blue);
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section{
+    padding:56px 0;
+    border-bottom:1px solid var(--line);
+  }
+
+  section:last-of-type{
+    border-bottom:none;
+  }
+
+  .tag{
+    font-family:'Space Mono', monospace;
+    font-size:0.72rem;
+    color:var(--blue);
+    letter-spacing:0.04em;
+    margin-bottom:10px;
+  }
+
+  h2{
+    font-family:'Space Mono', monospace;
+    font-weight:700;
+    font-size:1.5rem;
+    color:var(--text);
+    margin-bottom:20px;
+    max-width:34ch;
+  }
+
+  h2 span{color:var(--green);}
+
+  p{
+    max-width:68ch;
+    color:var(--text);
+    font-weight:300;
+  }
+
+  p + p{margin-top:14px;}
+
+  /* ---------- INTRO ---------- */
+  .intro p{color:#c3cfcd;}
+
+  /* ---------- GLOSARIO ---------- */
+  .glossary{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0;
+    border:1px solid var(--line);
+    margin-top:8px;
+  }
+
+  .term{
+    padding:22px 24px;
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+
+  .term:nth-child(2n){border-right:none;}
+
+  .term dt{
+    font-family:'Space Mono', monospace;
+    color:var(--green);
+    font-size:0.95rem;
+    margin-bottom:6px;
+  }
+
+  .term dd{
+    color:var(--muted);
+    font-size:0.92rem;
+  }
+
+  /* ---------- CICLO ---------- */
+  .cycle{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:0;
+    margin-top:24px;
+    counter-reset:step;
+  }
+
+  .step{
+    position:relative;
+    padding:24px 18px 18px;
+    border-top:2px solid var(--blue);
+  }
+
+  .step:nth-child(even){
+    border-top:2px solid var(--green);
+  }
+
+  .step::before{
+    counter-increment:step;
+    content:"0" counter(step);
+    font-family:'Space Mono', monospace;
+    font-size:0.75rem;
+    color:var(--muted);
+    display:block;
+    margin-bottom:10px;
+  }
+
+  .step h3{
+    font-family:'Space Mono', monospace;
+    font-size:0.95rem;
+    color:var(--text);
+    margin-bottom:8px;
+    font-weight:400;
+  }
+
+  .step p{
+    font-size:0.85rem;
+    color:var(--muted);
+  }
+
+  .cycle-note{
+    margin-top:18px;
+    font-size:0.85rem;
+    color:var(--muted);
+    font-style:italic;
+  }
+
+  .cycle-note::before{
+    content:"↻ ";
+    color:var(--green);
+    font-style:normal;
+  }
+
+  /* ---------- VENTAJAS / DESVENTAJAS ---------- */
+  .pros-cons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1px;
+    background:var(--line);
+    margin-top:8px;
+    border:1px solid var(--line);
+  }
+
+  .pc-col{
+    background:var(--bg);
+    padding:24px;
+  }
+
+  .pc-col h3{
+    font-family:'Space Mono', monospace;
+    font-size:0.85rem;
+    margin-bottom:16px;
+  }
+
+  .pc-col.pros h3{color:var(--green);}
+  .pc-col.cons h3{color:var(--blue);}
+
+  .pc-col ul{
+    list-style:none;
+  }
+
+  .pc-col li{
+    font-size:0.9rem;
+    color:var(--text);
+    padding-left:16px;
+    position:relative;
+    margin-bottom:12px;
+  }
+
+  .pc-col.pros li::before{
+    content:"+";
+    position:absolute;
+    left:0;
+    color:var(--green);
+    font-family:'Space Mono', monospace;
+  }
+
+  .pc-col.cons li::before{
+    content:"–";
+    position:absolute;
+    left:0;
+    color:var(--blue);
+    font-family:'Space Mono', monospace;
+  }
+
+  /* ---------- TABLA COMPARATIVA ---------- */
+  .compare{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:16px;
+    font-size:0.88rem;
+  }
+
+  .compare th, .compare td{
+    text-align:left;
+    padding:14px 16px;
+    border:1px solid var(--line);
+    vertical-align:top;
+  }
+
+  .compare th{
+    font-family:'Space Mono', monospace;
+    font-weight:400;
+    font-size:0.78rem;
+    background:var(--bg-panel);
+  }
+
+  .compare th.col-ind{color:var(--green);}
+  .compare th.col-serv{color:var(--blue);}
+
+  .compare td{color:var(--muted);}
+
+  .compare tr td:first-child{
+    color:var(--text);
+    font-family:'Space Mono', monospace;
+    font-size:0.78rem;
+    width:24%;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding:36px 0 60px;
+    text-align:center;
+    font-family:'Space Mono', monospace;
+    font-size:0.72rem;
+    color:var(--muted);
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:640px){
+    header{padding:56px 0 40px;}
+    section{padding:40px 0;}
+    .glossary{grid-template-columns:1fr;}
+    .term{border-right:none;}
+    .cycle{grid-template-columns:1fr 1fr;}
+    .pros-cons{grid-template-columns:1fr;}
+    .compare{font-size:0.78rem;}
+    .compare th, .compare td{padding:10px;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .glitch, .glitch::before, .glitch::after{animation:none;}
+  }
+
+  ::selection{
+    background:var(--green);
+    color:#000;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <h1 class="glitch" data-text="CONCEPTOS BÁSICOS DE AUTOMATIZACIÓN">CONCEPTOS BÁSICOS DE AUTOMATIZACIÓN</h1>
+    <p class="byline">
+      <strong>Cristian Eduardo Niños Molina</strong> — CBTIS144 · <span class="school">Especialidad en Inteligencia Artificial</span>
+    </p>
+  </header>
+
+  <section class="intro">
+    <p class="tag">// INTRODUCCIÓN</p>
+    <h2>Cuando las máquinas empiezan a decidir por sí mismas</h2>
+    <p>
+      La automatización es el conjunto de técnicas y tecnologías que permiten que un sistema realice tareas
+      con mínima o nula intervención humana, apoyándose en sensores, controladores y actuadores que trabajan
+      de forma coordinada. Su origen está ligado a la industria, pero hoy alcanza casi cualquier ámbito:
+      líneas de producción, hogares, hospitales, bancos y plataformas digitales.
+    </p>
+    <p>
+      Entender sus conceptos básicos es el primer paso para diseñar sistemas inteligentes, ya que la
+      automatización moderna es la base sobre la que se construyen la robótica, el internet de las cosas
+      y buena parte de las aplicaciones de inteligencia artificial.
+    </p>
+  </section>
+
+  <section>
+    <p class="tag">// GLOSARIO</p>
+    <h2>Términos <span>clave</span> para entender el tema</h2>
+    <dl class="glossary">
+      <div class="term">
+        <dt>Sensor</dt>
+        <dd>Dispositivo que capta una variable física (temperatura, presión, luz, movimiento) y la convierte en una señal medible.</dd>
+      </div>
+      <div class="term">
+        <dt>Actuador</dt>
+        <dd>Elemento que ejecuta una acción física —mover, abrir, empujar— a partir de una orden del sistema de control.</dd>
+      </div>
+      <div class="term">
+        <dt>Controlador</dt>
+        <dd>Unidad (como un PLC o microcontrolador) que procesa la información recibida y decide qué acción tomar.</dd>
+      </div>
+      <div class="term">
+        <dt>Retroalimentación</dt>
+        <dd>Información que regresa al sistema sobre el resultado de una acción, usada para ajustar el comportamiento futuro.</dd>
+      </div>
+      <div class="term">
+        <dt>PLC</dt>
+        <dd>Controlador Lógico Programable; computadora industrial diseñada para automatizar procesos electromecánicos.</dd>
+      </div>
+      <div class="term">
+        <dt>Lazo de control</dt>
+        <dd>Ciclo continuo entre medición, decisión y acción que mantiene un proceso dentro de los parámetros deseados.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section>
+    <p class="tag">// PROCESO</p>
+    <h2>El ciclo de la <span>automatización</span></h2>
+    <p>Todo sistema automatizado repite, de forma continua, la misma secuencia lógica:</p>
+    <div class="cycle">
+      <div class="step">
+        <h3>Detección</h3>
+        <p>Los sensores capturan datos del entorno o del proceso en tiempo real.</p>
+      </div>
+      <div class="step">
+        <h3>Procesamiento</h3>
+        <p>El controlador analiza los datos y los compara con los parámetros programados.</p>
+      </div>
+      <div class="step">
+        <h3>Decisión</h3>
+        <p>El sistema determina qué acción es necesaria según la lógica establecida.</p>
+      </div>
+      <div class="step">
+        <h3>Actuación</h3>
+        <p>Los actuadores ejecutan la acción física, y el resultado retroalimenta al sistema.</p>
+      </div>
+    </div>
+    <p class="cycle-note">El ciclo vuelve a la detección de forma constante, ajustándose cada vez con la nueva información.</p>
+  </section>
+
+  <section>
+    <p class="tag">// BALANCE</p>
+    <h2>Ventajas y <span>desventajas</span></h2>
+    <div class="pros-cons">
+      <div class="pc-col pros">
+        <h3>Ventajas</h3>
+        <ul>
+          <li>Aumenta la productividad y reduce tiempos de operación.</li>
+          <li>Mejora la precisión y reduce el error humano.</li>
+          <li>Permite operar en condiciones peligrosas sin exponer personas.</li>
+          <li>Genera datos constantes útiles para tomar decisiones.</li>
+        </ul>
+      </div>
+      <div class="pc-col cons">
+        <h3>Desventajas</h3>
+        <ul>
+          <li>Requiere una inversión inicial alta en equipo y desarrollo.</li>
+          <li>Puede desplazar empleos que antes eran manuales.</li>
+          <li>Depende de mantenimiento técnico especializado.</li>
+          <li>Un fallo en el sistema puede detener todo el proceso.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="tag">// COMPARATIVA</p>
+    <h2>Automatización <span>industrial</span> vs. de <span>servicios</span></h2>
+    <table class="compare">
+      <thead>
+        <tr>
+          <th>Criterio</th>
+          <th class="col-ind">Procesos industriales</th>
+          <th class="col-serv">Procesos de servicios</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Objeto de trabajo</td>
+          <td>Materiales físicos, piezas y productos.</td>
+          <td>Información, trámites e interacción con personas.</td>
+        </tr>
+        <tr>
+          <td>Tecnología típica</td>
+          <td>PLC, robots industriales, bandas y sensores de proceso.</td>
+          <td>Software, chatbots, RPA y sistemas de gestión.</td>
+        </tr>
+        <tr>
+          <td>Objetivo principal</td>
+          <td>Aumentar producción y consistencia del producto.</td>
+          <td>Reducir tiempos de atención y mejorar la experiencia.</td>
+        </tr>
+        <tr>
+          <td>Entorno</td>
+          <td>Plantas y líneas de producción físicas.</td>
+          <td>Plataformas digitales, oficinas y centros de atención.</td>
+        </tr>
+        <tr>
+          <td>Ejemplo</td>
+          <td>Brazo robótico que ensambla piezas de un vehículo.</td>
+          <td>Sistema que responde consultas bancarias automáticamente.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    CBTIS144 · Inteligencia Artificial · Conceptos Básicos de Automatización
+  </footer>
+
+</div>
+
+</body>
+</html>
