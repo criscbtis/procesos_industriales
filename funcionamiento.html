@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invernadero Inteligente - Proyecto</title>
+<style>
+  :root {
+    --bg: #050706;
+    --bg-panel: #0a0f0c;
+    --green: #39ff8f;
+    --green-dim: #1c7a4c;
+    --blue: #3ad6ff;
+    --blue-dim: #1a6b8a;
+    --text: #d9f5e6;
+    --text-dim: #7fa896;
+    --line: rgba(57, 255, 143, 0.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Courier New', 'Consolas', monospace;
+    line-height: 1.6;
+    padding: 2rem 1rem;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  /* --- ESTILOS DE SECCIÓN --- */
+  .seccion {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 2rem;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .titulo-seccion {
+    font-family: 'Arial Black', sans-serif;
+    font-size: 1.8rem;
+    color: var(--green);
+    border-bottom: 2px solid var(--green-dim);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  p, label {
+    color: var(--text);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+
+  /* --- PARTE 1: DIAGRAMA Y DESCRIPCIÓN --- */
+  .diagrama-contenedor {
+    width: 100%;
+    min-height: 250px;
+    border: 2px dashed var(--green-dim);
+    background: rgba(57, 255, 143, 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 4px;
+  }
+
+  /* --- PARTE 2: CÓDIGO Y DESCRIPCIÓN --- */
+  .code-block {
+    background: #000;
+    border: 1px solid var(--blue-dim);
+    padding: 1.2rem;
+    font-size: 0.85rem;
+    color: var(--blue);
+    overflow-x: auto;
+    white-space: pre;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+  }
+
+  .code-block .kw { color: #ff79c6; }
+  .code-block .fn { color: var(--green); }
+  .code-block .cm { color: var(--text-dim); }
+
+  .descripcion-caja {
+    background: rgba(58, 214, 255, 0.03);
+    border-left: 3px solid var(--blue);
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  /* --- PARTE 3: REPRESENTACIÓN (IMAGEN Y VIDEO) --- */
+  .media-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .media-box {
+    width: 100%;
+    background: #000;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .media-box img, .media-box video {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .media-title {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* --- RESPONSIVO --- */
+  @media (max-width: 768px) {
+    body { padding: 1rem 0.5rem; }
+    .seccion { padding: 1.2rem; }
+    .titulo-seccion { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ================= PARTE 1 ================= -->
+  <section class="seccion">
+    <h2 class="titulo-seccion">01. Diagrama del Sistema</h2>
+    
+    <div class="descripcion-caja">
+      <p><strong>Descripción del Diagrama:</strong></p>
+      <p>En esta sección se representa la arquitectura de componentes del invernadero inteligente. El microcontrolador central procesa la información recibida desde los sensores ambientales y determina la activación de los actuadores correspondientes para mantener las condiciones óptimas del cultivo.</p>
+    </div>
+
+    <!-- Espacio para el diagrama abajo -->
+    <div class="diagrama-contenedor">
+      <!-- Puedes reemplazar este SVG o insertar una etiqueta <img> con tu diagrama -->
+      <svg width="100%" height="180" viewBox="0 0 600 180" xmlns="http://www.w3.org/2000/svg">
+        <rect x="220" y="60" width="160" height="60" rx="5" fill="#0a0f0c" stroke="#39ff8f" stroke-width="2"/>
+        <text x="300" y="95" fill="#39ff8f" font-family="monospace" font-size="14" text-anchor="middle">ARDUINO / ESP32</text>
+        
+        <!-- Sensores -->
+        <rect x="20" y="60" width="120" height="60" rx="5" fill="#0a0f0c" stroke="#3ad6ff" stroke-width="1.5"/>
+        <text x="80" y="95" fill="#3ad6ff" font-family="monospace" font-size="12" text-anchor="middle">SENSORES</text>
+        <line x1="140" y1="90" x2="220" y2="90" stroke="#3ad6ff" stroke-width="2" marker-end="url(#arrow)"/>
+        
+        <!-- Actuadores -->
+        <rect x="460" y="60" width="120" height="60" rx="5" fill="#0a0f0c" stroke="#39ff8f" stroke-width="1.5"/>
+        <text x="520" y="95" fill="#39ff8f" font-family="monospace" font-size="12" text-anchor="middle">ACTUADORES</text>
+        <line x1="380" y1="90" x2="460" y2="90" stroke="#39ff8f" stroke-width="2"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ================= PARTE 2 ================= -->
+  <section class="seccion">
+    <h2 class="titulo-seccion">02. Código de Control</h2>
+    
+    <!-- Bloque de código -->
+    <pre class="code-block"><code><span class="cm">// Control Automatizado - Invernadero Inteligente</span>
+<span class="kw">#include</span> &lt;DHT.h&gt;
+
+<span class="kw">#define</span> DHTPIN 2
+<span class="kw">#define</span> DHTTYPE DHT11
+<span class="kw">#define</span> PIN_BOMBA 8
+<span class="kw">#define</span> PIN_VENTILADOR 9
+
+DHT dht(DHTPIN, DHTTYPE);
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  pinMode(PIN_BOMBA, OUTPUT);
+  pinMode(PIN_VENTILADOR, OUTPUT);
+  dht.begin();
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">float</span> temp = dht.readTemperature();
+  <span class="kw">int</span> humedadSuelo = analogRead(A0);
+
+  <span class="cm">// Lógica de control de temperatura</span>
+  <span class="kw">if</span> (temp > 30.0) {
+    digitalWrite(PIN_VENTILADOR, HIGH);
+  } <span class="kw">else</span> {
+    digitalWrite(PIN_VENTILADOR, LOW);
+  }
+
+  delay(1000);
+}</code></pre>
+
+    <!-- Espacio reservado para la descripción -->
+    <div class="descripcion-caja">
+      <p><strong>Descripción del Código:</strong></p>
+      <p>Escribe aquí la explicación detallada del funcionamiento del código, librerías utilizadas, asignación de pines y la lógica de programación implementada para las lecturas del microcontrolador.</p>
+    </div>
+  </section>
+
+  <!-- ================= PARTE 3 ================= -->
+  <section class="seccion">
+    <h2 class="titulo-seccion">03. Representación</h2>
+
+    <div class="media-container">
+      <!-- Imagen alusiva en la parte superior -->
+      <div class="media-box">
+        <div class="media-title">ILUSTRACIÓN / CONCEPTO DEL INVERNADERO INTELIGENTE</div>
+        <!-- Reemplaza "imagen_invernadero.jpg" por la ruta de tu imagen -->
+        <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=1000&q=80" alt="Invernadero Inteligente">
+      </div>
+
+      <!-- Video demostrativo en la parte inferior -->
+      <div class="media-box">
+        <div class="media-title">DEMOSTRACIÓN DE FUNCIONAMIENTO DEL CIRCUITO</div>
+        <!-- Reemplaza "video_circuito.mp4" por la ruta de tu video -->
+        <video controls poster="https://via.placeholder.com/800x450/0a0f0c/39ff8f?text=Cargar+Video+del+Circuito">
+          <source src="video_circuito.mp4" type="video/mp4">
+          Tu navegador no soporta la reproducción de video.
+        </video>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>
