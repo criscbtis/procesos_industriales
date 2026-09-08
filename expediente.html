@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invernadero Inteligente · Expediente de Proyecto</title>
+<style>
+  :root{
+    --bg:#050706;
+    --bg-panel:#0a0f0c;
+    --green:#39ff8f;
+    --green-dim:#1c7a4c;
+    --blue:#3ad6ff;
+    --blue-dim:#1a6b8a;
+    --text:#d9f5e6;
+    --text-dim:#7fa896;
+    --line: rgba(57,255,143,0.25);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Courier New', 'Consolas', monospace;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(57,255,143,0.03) 0px, rgba(57,255,143,0.03) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+    z-index:2;
+    mix-blend-mode:screen;
+  }
+
+  h1,h2,h3{
+    font-family:'Arial Black', 'Arial', sans-serif;
+    letter-spacing:0.5px;
+  }
+
+  /* ================= GLITCH TEXT ================= */
+  .glitch{
+    position:relative;
+    color:var(--text);
+    display:inline-block;
+  }
+  .glitch::before,
+  .glitch::after{
+    content: attr(data-text);
+    position:absolute;
+    left:0; top:0;
+    width:100%;
+    overflow:hidden;
+    background:var(--bg);
+  }
+  .glitch::before{
+    color:var(--blue);
+    clip-path: inset(0 0 60% 0);
+    animation: glitch-top 4.5s infinite linear;
+  }
+  .glitch::after{
+    color:var(--green);
+    clip-path: inset(60% 0 0 0);
+    animation: glitch-bottom 4.5s infinite linear;
+  }
+  @keyframes glitch-top{
+    0%, 88%, 100%{ transform:translate(0,0); }
+    89%{ transform:translate(-3px,-1px); }
+    90%{ transform:translate(3px,1px); }
+    91%{ transform:translate(-2px,0); }
+    92%{ transform:translate(0,0); }
+  }
+  @keyframes glitch-bottom{
+    0%, 88%, 100%{ transform:translate(0,0); }
+    89%{ transform:translate(3px,1px); }
+    90%{ transform:translate(-3px,-1px); }
+    91%{ transform:translate(2px,0); }
+    92%{ transform:translate(0,0); }
+  }
+
+  /* ================= HEADER / PORTADA ================= */
+  .portada{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding: 3rem 1.25rem;
+    z-index:1;
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(58,214,255,0.10), transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(57,255,143,0.10), transparent 55%),
+      var(--bg);
+  }
+
+  .portada .grid-lines{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 42px 42px;
+    opacity:0.35;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 78%);
+  }
+
+  .tag{
+    position:relative;
+    font-size: clamp(0.65rem, 2vw, 0.75rem);
+    letter-spacing:2px;
+    color:var(--blue);
+    border:1px solid var(--blue-dim);
+    padding:0.35rem 0.9rem;
+    border-radius:2px;
+    margin-bottom:1.75rem;
+    background:rgba(58,214,255,0.05);
+    max-width: 100%;
+  }
+
+  .portada h1{
+    position:relative;
+    font-size: clamp(1.8rem, 6vw, 4.2rem);
+    line-height:1.1;
+    max-width:18ch;
+    text-shadow: 0 0 22px rgba(57,255,143,0.25);
+    word-break: break-word;
+  }
+
+  .portada .subline{
+    position:relative;
+    margin-top:1.6rem;
+    font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+    color:var(--text-dim);
+    max-width:44ch;
+  }
+
+  .portada .fecha{
+    position:relative;
+    margin-top:1rem;
+    font-size:0.78rem;
+    letter-spacing:2px;
+    color:var(--green);
+  }
+
+  .autor-box{
+    position:relative;
+    margin-top:2.5rem;
+    padding:1.1rem 1.4rem;
+    border:1px solid var(--green-dim);
+    background:rgba(57,255,143,0.04);
+    text-align:left;
+    max-width:480px;
+    width:100%;
+  }
+  .autor-box .label{
+    font-size:0.68rem;
+    letter-spacing:2px;
+    color:var(--text-dim);
+    text-transform:uppercase;
+  }
+  .autor-box .nombres{
+    margin:0.5rem 0 0.9rem;
+  }
+  .autor-box .nombres div{
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+    color:var(--green);
+    padding:0.15rem 0;
+  }
+  .autor-box .escuela{
+    font-size:0.85rem;
+    color:var(--text);
+    border-top:1px solid var(--line);
+    padding-top:0.7rem;
+  }
+  .autor-box .esp{ color:var(--blue); }
+  .autor-box .docente{
+    margin-top:0.5rem;
+    font-size:0.82rem;
+    color:var(--text-dim);
+  }
+  .autor-box .docente span{ color:var(--blue); }
+
+  .scroll-hint{
+    margin-top:2.5rem;
+    font-size:0.7rem;
+    letter-spacing:3px;
+    color:var(--text-dim);
+    animation: blink 1.8s infinite steps(1);
+  }
+  @keyframes blink{
+    0%,49%{opacity:1;}
+    50%,100%{opacity:0.15;}
+  }
+
+  /* ================= SECCIONES GENERALES ================= */
+  section{
+    position:relative;
+    z-index:1;
+    padding: clamp(2.5rem, 5vw, 4.5rem) 1.25rem;
+    max-width:960px;
+    margin:0 auto;
+  }
+  section:nth-of-type(even){
+    background: rgba(255,255,255,0.012);
+  }
+
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:0.75rem;
+    margin-bottom:2rem;
+    border-bottom:1px solid var(--line);
+    padding-bottom:0.9rem;
+    flex-wrap: wrap;
+  }
+  .section-head .bar{
+    width:10px; height:10px;
+    background:var(--green);
+    box-shadow:0 0 10px var(--green);
+    flex-shrink:0;
+  }
+  .section-head h2{
+    font-size:clamp(1.3rem, 3.2vw, 2rem);
+    color:var(--text);
+  }
+  .section-head .num-tag{
+    margin-left:auto;
+    font-size:0.7rem;
+    letter-spacing:2px;
+    color:var(--text-dim);
+  }
+
+  p{
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    color:var(--text);
+    margin-bottom:1.2rem;
+    max-width:74ch;
+  }
+  p:last-child{margin-bottom:0;}
+
+  .destacado{
+    text-decoration: underline;
+    text-decoration-color: var(--green);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    color:var(--green);
+  }
+  .destacado.azul{
+    text-decoration-color: var(--blue);
+    color:var(--blue);
+  }
+
+  ul.lista{ margin: 0 0 1.2rem 0; list-style:none; }
+  ul.lista li{
+    position:relative;
+    padding-left:1.4rem;
+    margin-bottom:0.8rem;
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
+    color:var(--text);
+    max-width:70ch;
+  }
+  ul.lista li::before{
+    content:"▹";
+    position:absolute;
+    left:0;
+    color:var(--green);
+  }
+  ul.lista.azul li::before{ color:var(--blue); }
+
+  /* ---------- Lista de bloques sin Cards ---------- */
+  .bloques-lista{
+    display:flex;
+    flex-direction:column;
+    gap:1.5rem;
+    margin-bottom:1.5rem;
+  }
+  .bloque-item{
+    position:relative;
+    padding:1.2rem;
+    background:var(--bg-panel);
+    border-left:3px solid var(--green);
+    border-bottom:1px solid rgba(57,255,143,0.15);
+  }
+  .bloque-item.azul{
+    border-left-color:var(--blue);
+    border-bottom-color:rgba(58,214,255,0.15);
+  }
+  .bloque-item .num{
+    font-size:0.7rem;
+    letter-spacing:2px;
+    color:var(--text-dim);
+    display:block;
+    margin-bottom:0.4rem;
+  }
+  .bloque-item h3{
+    font-size:1.1rem;
+    color:var(--text);
+    margin-bottom:0.5rem;
+  }
+  .bloque-item p{
+    font-size:0.9rem;
+    color:var(--text-dim);
+    margin-bottom:0;
+  }
+
+  .medidas{
+    border-left:2px solid var(--green);
+    padding-left:1rem;
+    margin-top:0.5rem;
+  }
+
+  /* ---------- Tablas ---------- */
+  .tabla-wrap{
+    overflow-x:auto;
+    border:1px solid var(--line);
+    margin-bottom:1.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.85rem;
+    min-width:480px;
+  }
+  thead th{
+    text-align:left;
+    background:rgba(57,255,143,0.08);
+    color:var(--green);
+    letter-spacing:1px;
+    font-size:0.72rem;
+    text-transform:uppercase;
+    padding:0.8rem 0.9rem;
+    border-bottom:1px solid var(--green-dim);
+  }
+  tbody td{
+    padding:0.75rem 0.9rem;
+    color:var(--text);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    vertical-align:top;
+  }
+  tbody tr:hover td{ background:rgba(58,214,255,0.04); }
+  tbody tr:last-child td{ border-bottom:none; }
+  td.num-cell, th.num-cell{ text-align:right; }
+  tfoot td{
+    padding:0.85rem 0.9rem;
+    color:var(--green);
+    font-weight:bold;
+    border-top:1px solid var(--green-dim);
+  }
+
+  /* ---------- Bloque de código / pseudocódigo ---------- */
+  .code-block{
+    background:var(--bg-panel);
+    border:1px solid var(--green-dim);
+    padding:1.2rem;
+    font-size: clamp(0.75rem, 2vw, 0.85rem);
+    color:var(--text);
+    overflow-x:auto;
+    white-space:pre-wrap;
+    line-height:1.6;
+  }
+  .code-block .kw{ color:var(--blue); }
+  .code-block .fn{ color:var(--green); }
+  .code-block .cm{ color:var(--text-dim); }
+
+  /* ---------- Diagrama de flujo (CSS adaptativo) ---------- */
+  .flow{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0;
+    width:100%;
+  }
+  .flow-node{
+    position:relative;
+    border:1px solid var(--line);
+    background:var(--bg-panel);
+    padding:0.75rem 1.2rem;
+    font-size:0.82rem;
+    text-align:center;
+    color:var(--text);
+    width:100%;
+    max-width:320px;
+  }
+  .flow-node.start{
+    border-radius:50px;
+    border-color:var(--green);
+    color:var(--green);
+  }
+  .flow-node.decision{
+    border-color:var(--blue);
+    color:var(--blue);
+    transform: skewX(-4deg);
+  }
+  .flow-node.decision span{ display:block; transform: skewX(4deg); }
+  .flow-node.action{ border-color:var(--green-dim); }
+  .flow-arrow{
+    width:1px;
+    height:1.6rem;
+    background: var(--line);
+    position:relative;
+  }
+  .flow-arrow::after{
+    content:"";
+    position:absolute;
+    bottom:0; left:50%;
+    transform:translateX(-50%);
+    border:5px solid transparent;
+    border-top-color: var(--green-dim);
+  }
+  .flow-branch{
+    display:flex;
+    gap:1.5rem;
+    align-items:flex-start;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin:0.4rem 0;
+    width:100%;
+  }
+  .flow-col{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0;
+    flex:1;
+    min-width:240px;
+  }
+  .flow-label{
+    font-size:0.68rem;
+    letter-spacing:1px;
+    color:var(--text-dim);
+    margin:0.3rem 0;
+  }
+
+  /* ---------- Diagrama de conexión (lista adaptativa) ---------- */
+  .conexion-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap:1rem;
+    margin-top:1rem;
+  }
+  .conexion-item{
+    border:1px solid var(--line);
+    background:var(--bg-panel);
+    padding:0.9rem 1rem;
+    font-size:0.82rem;
+  }
+  .conexion-item .pin{
+    color:var(--blue);
+    font-size:0.75rem;
+    letter-spacing:1px;
+    display:block;
+    margin-bottom:0.35rem;
+    font-weight:bold;
+  }
+
+  /* ---------- Cronograma tipo timeline ---------- */
+  .timeline{
+    position:relative;
+    padding-left:1.2rem;
+    border-left:2px solid var(--green-dim);
+  }
+  .timeline-item{
+    position:relative;
+    margin-bottom:1.4rem;
+    padding-left:0.8rem;
+  }
+  .timeline-item::before{
+    content:"";
+    position:absolute;
+    left:-1.45rem;
+    top:0.35rem;
+    width:8px; height:8px;
+    background:var(--green);
+    box-shadow:0 0 8px var(--green);
+    border-radius:50%;
+  }
+  .timeline-item .fecha-tl{
+    color:var(--blue);
+    font-size:0.78rem;
+    letter-spacing:1px;
+  }
+  .timeline-item .actividad{
+    color:var(--text);
+    font-size:0.95rem;
+    margin-top:0.15rem;
+  }
+
+  /* ---------- Presupuesto ---------- */
+  .presu-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap:1rem;
+  }
+  .presu-item{
+    border:1px solid var(--line);
+    padding:1.1rem 1.2rem;
+    background:var(--bg-panel);
+  }
+  .presu-item .cantidad{
+    font-size:1.3rem;
+    color:var(--green);
+    font-weight:bold;
+  }
+  .presu-item .etiqueta{
+    font-size:0.72rem;
+    color:var(--text-dim);
+    letter-spacing:1px;
+    margin-top:0.3rem;
+  }
+  .presu-item.azul .cantidad{ color:var(--blue); }
+
+  /* ---------- Distribución de tareas ---------- */
+  .tareas-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap:1rem;
+  }
+  .tarea-item{
+    border-left:3px solid var(--blue);
+    padding:0.6rem 0 0.6rem 1rem;
+    background:var(--bg-panel);
+  }
+  .tarea-item .persona{
+    color:var(--green);
+    font-size:0.95rem;
+    margin-bottom:0.2rem;
+    font-weight:bold;
+  }
+  .tarea-item .rol{
+    color:var(--text-dim);
+    font-size:0.85rem;
+  }
+
+  .nota-clima{
+    margin-top:1.2rem;
+    border:1px dashed var(--blue-dim);
+    padding:0.9rem 1.1rem;
+    font-size:0.88rem;
+    color:var(--blue);
+    background:rgba(58,214,255,0.04);
+  }
+
+  /* ---------- Foto del prototipo ---------- */
+  .foto-wrap{
+    border:1px solid var(--line);
+    background:var(--bg-panel);
+    padding:0.6rem;
+    margin-top:1.5rem;
+  }
+  .foto-wrap img{
+    width:100%;
+    height:auto;
+    display:block;
+    filter: saturate(0.9) contrast(1.05);
+  }
+  .foto-cap{
+    font-size:0.72rem;
+    letter-spacing:1px;
+    color:var(--text-dim);
+    margin-top:0.6rem;
+    text-align:center;
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    text-align:center;
+    padding:2rem 1.25rem 3rem;
+    font-size:0.72rem;
+    letter-spacing:1.5px;
+    color:var(--text-dim);
+    border-top:1px solid var(--line);
+  }
+  footer span{color:var(--green);}
+
+  /* ---------- Ajustes Responsivos ---------- */
+  @media (max-width:600px){
+    .portada{ min-height:100svh; padding:2rem 1rem; }
+    .autor-box{ padding:0.9rem 1rem; }
+    .flow-branch{ flex-direction:column; align-items:center; }
+    .flow-col{ width:100%; }
+    .conexion-grid, .presu-grid, .tareas-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .glitch::before,.glitch::after{animation:none;}
+    .scroll-hint{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== PORTADA ===================== -->
+<header class="portada">
+  <div class="grid-lines"></div>
+  <span class="tag">CBTIS 144 · ESPECIALIDAD DE IA · 5°A</span>
+
+  <h1 class="glitch" data-text="Invernadero inteligente">
+    Invernadero inteligente
+  </h1>
+
+  <p class="subline">Sistema de agricultura automatizada a pequeña escala con Arduino: riego, ventilación y monitoreo en tiempo real para el cultivo de chile habanero.</p>
+  <div class="fecha">FECHA · 03/09/2026</div>
+
+  <div class="autor-box">
+    <div class="label">Alumnos</div>
+    <div class="nombres">
+      <div>Ruiz Galder Abner Leonardo</div>
+      <div>Cundapi Solorzano Samara Valeria</div>
+      <div>Gutierrez Moguel David Yael</div>
+      <div>Niños Molina Cristian Eduardo</div>
+      <div>Guzman López Nayver Davis</div>
+    </div>
+    <div class="escuela">Especialidad de <span class="esp">Inteligencia Artificial</span> · CBTIS 144</div>
+    <div class="docente">Docente: <span>Chirino Balcazar Jordy Jesús</span></div>
+  </div>
+
+  <div class="scroll-hint">DESPLÁZATE ↓</div>
+</header>
+
+<!-- ===================== DESCRIPCIÓN DEL PROCESO ===================== -->
+<section id="descripcion">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Descripción del proceso</h2>
+    <span class="num-tag">02</span>
+  </div>
+
+  <p>
+    Esta maqueta representa un sistema de <span class="destacado">agricultura inteligente</span> a pequeña escala.
+    El Arduino recibe información de los sensores y activa elementos como la bomba de agua o el ventilador
+    según las condiciones del cultivo.
+  </p>
+
+  <p>
+    En un invernadero tradicional, el agricultor debe medir y ajustar todo manualmente. En uno inteligente,
+    el sistema se encarga de automatizar cuatro áreas críticas:
+  </p>
+
+  <ul class="lista">
+    <li><span class="destacado">Riego y fertilización (fertirriego):</span> suministro exacto de agua y nutrientes directamente a las raíces solo cuando la tierra lo necesita.</li>
+    <li><span class="destacado azul">Control de temperatura y humedad:</span> regulación del clima interno mediante apertura de ventanas, activación de ventiladores o calefacción.</li>
+    <li><span class="destacado">Gestión de la iluminación:</span> activación de luces LED para simular el sol en días nublados o prolongar las horas de luz.</li>
+    <li><span class="destacado azul">Ventilación y niveles de CO2:</span> renovación del aire para evitar humedad extrema y asegurar suficiente dióxido de carbono para la fotosíntesis.</li>
+  </ul>
+
+  <div class="foto-wrap">
+    <img src="expediente_invernadero2/prototipo.jpg" alt="Prototipo de invernadero inteligente con Arduino, sensores DHT11, sensor de humedad, LCD, bomba y ventilador">
+    <div class="foto-cap">PROTOTIPO · Arduino UNO + DHT11 + sensor de humedad de suelo + LCD + bomba + ventilador · cultivo de chile habanero</div>
+  </div>
+</section>
+
+<!-- ===================== CICLO DE AUTOMATIZACIÓN ===================== -->
+<section id="ciclo">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>El ciclo de automatización</h2>
+    <span class="num-tag">MEDIR · DECIDIR · ACTUAR</span>
+  </div>
+
+  <p>El funcionamiento del invernadero inteligente se basa en un ciclo continuo de tres etapas.</p>
+
+  <div class="bloques-lista">
+    <div class="bloque-item">
+      <span class="num">ETAPA 01</span>
+      <h3>Medir (los sensores)</h3>
+      <p>Distribuidos por el cultivo, miden variables en tiempo real: humedad del suelo, temperatura y humedad ambiental, e intensidad de luz.</p>
+    </div>
+
+    <div class="bloque-item azul">
+      <span class="num">ETAPA 02</span>
+      <h3>Decidir (el controlador)</h3>
+      <p>El Arduino compara los datos recibidos con los valores ideales programados para el chile habanero y decide si activa un mecanismo.</p>
+    </div>
+
+    <div class="bloque-item">
+      <span class="num">ETAPA 03</span>
+      <h3>Actuar (los actuadores)</h3>
+      <p>Extractores, ventiladores, bombas y electroválvulas corrigen el ambiente: se encienden si hace mucho calor o si el suelo está seco.</p>
+    </div>
+  </div>
+
+  <p style="margin-top:1.5rem;">
+    <span class="destacado azul">Automatización por evapotranspiración:</span> un sensor mide temperatura, humedad,
+    viento y sol para calcular la evapotranspiración de referencia (ETo). El sistema multiplica la ETo por el
+    coeficiente del cultivo (Kc) para saber el agua real que consume la planta, y el controlador acciona las
+    electroválvulas solo cuando es necesario.
+  </p>
+</section>
+
+<!-- ===================== PROBLEMA O NECESIDAD ===================== -->
+<section id="problema">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Problema o necesidad</h2>
+    <span class="num-tag">03</span>
+  </div>
+
+  <p>
+    <span class="destacado">El problema principal:</span> la falta de control preciso y continuo de las variables
+    ambientales en el cultivo escolar. Mantener manualmente las condiciones óptimas dentro de un invernadero
+    tradicional presenta serias dificultades:
+  </p>
+
+  <ul class="lista">
+    <li>Riesgo de daño en las plantas por variaciones de temperatura y humedad: sin control automático, el calor o la humedad relativa dentro de la estructura de PVC y nylon pueden elevarse rápidamente en horas pico de sol, marchitando las plantas o generando hongos.</li>
+    <li>Error humano e imposibilidad de monitoreo constante: depender de que estudiantes o profesores recuerden regar o ventilar el invernadero no es sostenible.</li>
+  </ul>
+
+  <p><span class="destacado azul">¿Cómo la automatización con Arduino resuelve esto?</span></p>
+  <ul class="lista azul">
+    <li>Riego automático e inteligente: el sensor de humedad activa la mini bomba mediante el módulo relé solo cuando es necesario.</li>
+    <li>Ventilación y regulación térmica: el DHT11 enciende el ventilador si la temperatura o humedad superan el umbral.</li>
+    <li>Monitoreo sin alterar el microclima: la pantalla LCD muestra los datos en vivo sin necesidad de abrir la estructura.</li>
+    <li>Integración pedagógica: permite a los estudiantes aprender programación, electrónica, sensores y agricultura al mismo tiempo.</li>
+  </ul>
+</section>
+
+<!-- ===================== OBJETIVOS ===================== -->
+<section id="objetivos">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Objetivos</h2>
+    <span class="num-tag">04 · 05</span>
+  </div>
+
+  <p><span class="destacado">Objetivo general.</span> Un invernadero con sistema de riego automático y específico que permita lograr un ahorro de costes en recursos hídricos y una adecuada nutrición en las plantas.</p>
+
+  <p style="margin-top:1.6rem;"><span class="destacado azul">Objetivos específicos.</span></p>
+  <ul class="lista azul">
+    <li>Ahorro de costes derivados de la mano de obra.</li>
+    <li>Mantenimiento del ambiente óptimo para el cultivo.</li>
+    <li>Control de los procesos fisiológicos de la planta.</li>
+    <li>Registro de datos que ayuda a verificar los efectos en el cultivo.</li>
+    <li>Analizar la calidad y fuente del agua para el diseño de la red de riego.</li>
+  </ul>
+</section>
+
+<!-- ===================== DIAGRAMA DE FLUJO ===================== -->
+<section id="diagrama-flujo">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Diagrama de flujo</h2>
+    <span class="num-tag">06</span>
+  </div>
+
+  <div class="flow">
+    <div class="flow-node start">INICIO</div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node action">Inicialización de componentes</div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node start">Inicio del ciclo</div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node action">Leer datos de los sensores</div>
+    <div class="flow-arrow"></div>
+
+    <div class="flow-branch">
+      <div class="flow-col">
+        <div class="flow-node decision"><span>Sensor DHT11: temp &gt; 30°C o humedad &gt; 70%</span></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-branch" style="gap:1rem;">
+          <div class="flow-col">
+            <div class="flow-label">SÍ</div>
+            <div class="flow-node action">Encender ventilador</div>
+          </div>
+          <div class="flow-col">
+            <div class="flow-label">NO</div>
+            <div class="flow-node action">Apagar ventilador</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-col">
+        <div class="flow-node decision"><span>Sensor de humedad del suelo &lt; 30%</span></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-branch" style="gap:1rem;">
+          <div class="flow-col">
+            <div class="flow-label">SÍ</div>
+            <div class="flow-node action">Encender bomba de agua</div>
+          </div>
+          <div class="flow-col">
+            <div class="flow-label">NO</div>
+            <div class="flow-node action">Apagar bomba de agua</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"></div>
+    <div class="flow-node action">Mostrar los datos en la pantalla LCD</div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node action">Esperar 0.5 segundos</div>
+    <div class="flow-label">↻ regresa a "Inicio del ciclo"</div>
+  </div>
+</section>
+
+<!-- ===================== ENTRADAS Y SALIDAS ===================== -->
+<section id="entradas-salidas">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Entradas y salidas</h2>
+    <span class="num-tag">07</span>
+  </div>
+
+  <div class="tabla-wrap">
+    <table>
+      <thead>
+        <tr><th>Componente</th><th>Información que recibe</th><th>Acciones que ejecuta</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Sensor DHT11</td>
+          <td>Captura del ambiente la temperatura (°C) y la humedad relativa del aire (%).</td>
+          <td>No actúa físicamente; envía las lecturas al microcontrolador.</td>
+        </tr>
+        <tr>
+          <td>Sensor de humedad del suelo</td>
+          <td>Mide la humedad del sustrato mediante resistencia/capacitancia entre electrodos.</td>
+          <td>Transmite una señal analógica o digital indicando qué tan seca o húmeda está la tierra.</td>
+        </tr>
+        <tr>
+          <td>Bomba de agua</td>
+          <td>Recibe una orden de encendido/apagado desde el microcontrolador vía relé.</td>
+          <td>Bombea agua desde el depósito hasta que la humedad del suelo alcance el nivel óptimo.</td>
+        </tr>
+        <tr>
+          <td>Ventilador</td>
+          <td>Recibe una señal de encendido o regulación de velocidad.</td>
+          <td>Extrae aire caliente o renueva el flujo de aire cuando el DHT11 detecta valores altos.</td>
+        </tr>
+        <tr>
+          <td>Pantalla LCD</td>
+          <td>Recibe datos y valores procesados por el microcontrolador.</td>
+          <td>Muestra la información en pantalla para monitoreo local en tiempo real.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== SENSORES Y ACTUADORES ===================== -->
+<section id="sensores-actuadores">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Selección de sensores y actuadores</h2>
+    <span class="num-tag">08</span>
+  </div>
+
+  <p class="destacado" style="text-decoration:none; color:var(--green);">Sensores</p>
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Sensor</th><th>Características básicas</th><th>Justificación</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>DHT11 (o DHT22)</td>
+          <td>Señal digital de un solo pin · mide temperatura y humedad del aire · 3.3–5V CC · 1 lectura/segundo.</td>
+          <td>Mide temperatura y humedad relativa del aire.</td>
+        </tr>
+        <tr>
+          <td>Sensor de humedad del suelo (higrómetro)</td>
+          <td>Señal analógica y digital · 3.3–5V CC · voltaje más alto en suelo seco, más bajo en suelo húmedo.</td>
+          <td>Mide el nivel de agua presente en la tierra de la maceta.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="destacado azul" style="text-decoration:none; margin-top:2rem;">Actuadores</p>
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Actuador</th><th>Características básicas</th><th>Justificación</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Módulo relé de 2 canales</td>
+          <td>Control a 5V CC · conmuta hasta 10A a 250V CA o 30V CC · terminales NO, NC y COM.</td>
+          <td>Interruptor controlado digitalmente por el Arduino para encender/apagar cargas de mayor consumo.</td>
+        </tr>
+        <tr>
+          <td>Mini bomba de agua y tubo</td>
+          <td>3–6V CC (o 12V) · consumo 100–200mA · caudal aprox. 80–120 L/h.</td>
+          <td>Riego automático transportando agua hacia las plantas cuando el suelo está seco.</td>
+        </tr>
+        <tr>
+          <td>Ventilador de 5V o 12V</td>
+          <td>Genera flujo de aire para renovación de gases o enfriamiento · consumo 100–300mA.</td>
+          <td>Regula la temperatura y circulación del aire cuando se superan los límites programados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== DIAGRAMA DE CONEXIÓN ===================== -->
+<section id="conexion">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Diagrama de conexión preliminar</h2>
+    <span class="num-tag">10</span>
+  </div>
+
+  <p>Sistema de control del invernadero sobre Arduino UNO, con protoboard central que distribuye alimentación a cada módulo.</p>
+
+  <div class="conexion-grid">
+    <div class="conexion-item"><span class="pin">SENSOR · SUELO</span>Sensor de humedad del suelo → VCC, GND y salida analógica al Arduino.</div>
+    <div class="conexion-item"><span class="pin">SENSOR · DHT11</span>DHT11 sobre protoboard → VCC, GND y pin de datos al Arduino.</div>
+    <div class="conexion-item"><span class="pin">PANTALLA LCD 16×2 I2C</span>VCC, GND, SDA y SCL conectados al Arduino vía bus I2C.</div>
+    <div class="conexion-item"><span class="pin">MÓDULO RELÉ 2 CANALES</span>IN1 → ventilador de 12V · IN2 → mini bomba de agua, ambos con fuente externa de 12V.</div>
+    <div class="conexion-item"><span class="pin">MINI BOMBA DE AGUA</span>Alimentada por fuente externa de 12V, conmutada por el canal 2 del relé, sumergida en el depósito.</div>
+    <div class="conexion-item"><span class="pin">VENTILADOR 12V</span>Alimentado por fuente externa de 12V, conmutado por el canal 1 del relé.</div>
+  </div>
+</section>
+
+<!-- ===================== ALGORITMO ===================== -->
+<section id="algoritmo">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Algoritmo / pseudocódigo</h2>
+    <span class="num-tag">11</span>
+  </div>
+
+  <div class="code-block"><span class="kw">INICIO</span>
+1. Declarar variables (Humedad, temperatura del suelo, delay).
+2. Configurar pines de entrada y salida (ventilador, bomba de agua, etc).
+3. Inicializar la pantalla LCD y el sensor DHT11.
+
+<span class="kw">CICLO PRINCIPAL:</span>
+1. <span class="fn">Leer datos de los sensores</span>
+   Leer Temperatura Aire y Humedad Aire desde DHT11
+   Leer Humedad Suelo desde Sensor de Suelo
+
+2. <span class="fn">Mostrar en la pantalla</span>
+   Borrar pantalla LCD
+   Mostrar en LCD Línea 1: "Temp: " + Temperatura Aire + "C"
+   Mostrar en LCD Línea 2: "H.Suelo: " + Humedad Suelo + "%"
+
+3. <span class="fn">Control de la bomba de agua</span>
+   SI Humedad Suelo &lt; Humedad Suelo Mínima
+     Entonces: Encender Bomba de Agua
+     Sino: Apagar Bomba de Agua
+
+4. <span class="fn">Control del ventilador</span>
+   SI Temperatura Aire &gt; Temperatura Máxima
+     Entonces: Encender Ventilador
+     Sino: Apagar Ventilador
+
+5. <span class="fn">Pausa</span>
+   Esperar 0.5 segundos antes de la siguiente lectura
+<span class="cm">Fin del ciclo</span></div>
+</section>
+
+<!-- ===================== BOM ===================== -->
+<section id="materiales">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Lista de materiales (BOM)</h2>
+    <span class="num-tag">12</span>
+  </div>
+
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Material</th><th>Cantidad</th><th>Justificación</th></tr></thead>
+      <tbody>
+        <tr><td>Tubo de PVC delgado</td><td>Según diseño</td><td>Forma la estructura de la maqueta y sostiene la cubierta.</td></tr>
+        <tr><td>Bolsa o lámina de nylon transparente</td><td>1 pieza</td><td>Permite el paso de luz y crea un ambiente protegido para las plantas.</td></tr>
+        <tr><td>Base de cartón, madera o MDF</td><td>1 pieza</td><td>Da estabilidad y facilita el montaje de los componentes.</td></tr>
+        <tr><td>Arduino UNO</td><td>1 pieza</td><td>Procesa las lecturas de los sensores y controla las salidas del sistema.</td></tr>
+        <tr><td>Sensor DHT11 o similar</td><td>1 pieza</td><td>Mide temperatura y humedad relativa del aire.</td></tr>
+        <tr><td>Sensor de humedad del suelo</td><td>1 o más piezas</td><td>Detecta si el sustrato está seco para decidir cuándo regar.</td></tr>
+        <tr><td>Módulo relé de 2 canales</td><td>1 pieza</td><td>Permite que el Arduino controle cargas de mayor corriente.</td></tr>
+        <tr><td>Mini bomba de agua y tubo</td><td>1 pieza</td><td>Impulsa el agua hacia el sistema de riego.</td></tr>
+        <tr><td>Ventilador de 5V o 12V</td><td>1 pieza</td><td>Ayuda a renovar el aire y disminuir el exceso de calor o humedad.</td></tr>
+        <tr><td>Pantalla LCD 16×2 con I2C o LEDs</td><td>1 pieza</td><td>Muestra datos o estados como temperatura, humedad y riego activo.</td></tr>
+        <tr><td>Protoboard y cables Dupont</td><td>1 juego</td><td>Permiten realizar conexiones de prueba sin soldar.</td></tr>
+        <tr><td>Fuente de alimentación y cable USB</td><td>1 pieza</td><td>Suministran energía al Arduino y a los actuadores.</td></tr>
+        <tr><td>Macetas pequeñas, tierra y plantas</td><td>Según el espacio</td><td>Representan el cultivo que se desea proteger y monitorear.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== COTIZACIÓN Y PRESUPUESTO ===================== -->
+<section id="presupuesto">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Cotización y presupuesto</h2>
+    <span class="num-tag">13 · 14</span>
+  </div>
+
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Material</th><th class="num-cell">Cantidad</th><th class="num-cell">Subtotal</th><th class="num-cell">Costo envío</th></tr></thead>
+      <tbody>
+        <tr><td>Maceta</td><td class="num-cell">1</td><td class="num-cell">$188</td><td class="num-cell">$0</td></tr>
+        <tr><td>Fuente de alimentación</td><td class="num-cell">1</td><td class="num-cell">$170</td><td class="num-cell">$70</td></tr>
+        <tr><td>Protoboard</td><td class="num-cell">1</td><td class="num-cell">$45</td><td class="num-cell">$0</td></tr>
+        <tr><td>Pantalla LCD</td><td class="num-cell">1</td><td class="num-cell">$80</td><td class="num-cell">$0</td></tr>
+        <tr><td>Ventilador</td><td class="num-cell">1</td><td class="num-cell">$62</td><td class="num-cell">$30</td></tr>
+        <tr><td>Bomba de agua</td><td class="num-cell">1</td><td class="num-cell">$49</td><td class="num-cell">$0</td></tr>
+        <tr><td>Módulo relé 2 canales</td><td class="num-cell">2</td><td class="num-cell">$66</td><td class="num-cell">$0</td></tr>
+        <tr><td>DHT11</td><td class="num-cell">2</td><td class="num-cell">$56</td><td class="num-cell">$0</td></tr>
+        <tr><td>Sensor de humedad del suelo</td><td class="num-cell">1</td><td class="num-cell">$51</td><td class="num-cell">$0</td></tr>
+        <tr><td>Arduino</td><td class="num-cell">1</td><td class="num-cell">$123</td><td class="num-cell">$0</td></tr>
+        <tr><td>Madera</td><td class="num-cell">1</td><td class="num-cell">$284</td><td class="num-cell">$100</td></tr>
+        <tr><td>Lámina de nylon</td><td class="num-cell">2</td><td class="num-cell">$289</td><td class="num-cell">$0</td></tr>
+        <tr><td>Tubo PVC</td><td class="num-cell">6 mts</td><td class="num-cell">$60</td><td class="num-cell">$0</td></tr>
+        <tr><td>Planta</td><td class="num-cell">1</td><td class="num-cell">$75</td><td class="num-cell">$0</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td colspan="2">Total</td><td class="num-cell">$1,598</td><td></td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="presu-grid" style="margin-top:1.6rem;">
+    <div class="presu-item">
+      <div class="cantidad">$2,000</div>
+      <div class="etiqueta">PRESUPUESTO DISPONIBLE (MXN)</div>
+    </div>
+    <div class="presu-item azul">
+      <div class="cantidad">$1,598.14</div>
+      <div class="etiqueta">COMPONENTES · ARDUINO COMPATIBLE</div>
+    </div>
+    <div class="presu-item azul">
+      <div class="cantidad">$1,862.33</div>
+      <div class="etiqueta">COMPONENTES · ARDUINO ORIGINAL</div>
+    </div>
+    <div class="presu-item">
+      <div class="cantidad">$300</div>
+      <div class="etiqueta">COSTOS DE ENVÍO APROX.</div>
+    </div>
+    <div class="presu-item">
+      <div class="cantidad">$1,000</div>
+      <div class="etiqueta">MARGEN PARA IMPREVISTOS</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DISTRIBUCIÓN DE TAREAS ===================== -->
+<section id="tareas">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Distribución de tareas</h2>
+    <span class="num-tag">15</span>
+  </div>
+
+  <div class="tareas-grid">
+    <div class="tarea-item"><div class="persona">Valeria</div><div class="rol">Soldar, decoración e investigación de la planta (helecho).</div></div>
+    <div class="tarea-item"><div class="persona">Leonardo</div><div class="rol">Programación.</div></div>
+    <div class="tarea-item"><div class="persona">Cristian</div><div class="rol">Armar estructura.</div></div>
+    <div class="tarea-item"><div class="persona">Nayver</div><div class="rol">Ensamble y soldar.</div></div>
+    <div class="tarea-item"><div class="persona">David</div><div class="rol">Armar circuitos.</div></div>
+  </div>
+</section>
+
+<!-- ===================== CRONOGRAMA ===================== -->
+<section id="cronograma">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Cronograma</h2>
+    <span class="num-tag">16</span>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-item"><div class="fecha-tl">11 / 09 / 2026</div><div class="actividad">Compra</div></div>
+    <div class="timeline-item"><div class="fecha-tl">20 / 09 / 2026</div><div class="actividad">Diseño</div></div>
+    <div class="timeline-item"><div class="fecha-tl">01 – 05 / 10 / 2026</div><div class="actividad">Programación</div></div>
+    <div class="timeline-item"><div class="fecha-tl">09 – 11 / 10 / 2026</div><div class="actividad">Armado</div></div>
+    <div class="timeline-item"><div class="fecha-tl">11 / 11 / 2026</div><div class="actividad">Pruebas</div></div>
+    <div class="timeline-item"><div class="fecha-tl">10 / 12 / 2026</div><div class="actividad">Presentación</div></div>
+  </div>
+</section>
+
+<!-- ===================== RIESGOS Y SEGURIDAD ===================== -->
+<section id="riesgos">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Riesgos y seguridad</h2>
+    <span class="num-tag">17</span>
+  </div>
+
+  <div class="bloques-lista">
+    <div class="bloque-item azul">
+      <h3>⚡ Riesgos eléctricos</h3>
+      <ul class="lista azul">
+        <li>Cortocircuitos por humedad o condensación en la placa o conexiones expuestas.</li>
+        <li>Sobrecarga de la placa al alimentar motores o bombas directamente desde los pines de 5V/3.3V.</li>
+        <li>Descargas por tensión de red (110V/220V) en los bornes del módulo de relevador.</li>
+      </ul>
+    </div>
+    
+    <div class="bloque-item azul">
+      <h3>⚙ Riesgos mecánicos</h3>
+      <ul class="lista azul">
+        <li>Inundación por fallo del sensor o del código, dejando la bomba encendida indefinidamente.</li>
+        <li>Fugas o ruptura de conexiones de agua que salpiquen la electrónica.</li>
+        <li>Atascamiento de la bomba por tierra o sedimentos.</li>
+      </ul>
+    </div>
+    
+    <div class="bloque-item azul">
+      <h3>🌡 Riesgos térmicos</h3>
+      <ul class="lista azul">
+        <li>Sobrecalentamiento de MOSFETs, reguladores de voltaje o módulos de relevador con corrientes elevadas.</li>
+        <li>Operación de la bomba en seco, generando fricción y calor excesivo.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="medidas">
+    <p class="destacado" style="text-decoration:none; color:var(--green); margin-bottom:0.8rem;">Medidas preventivas</p>
+    <ul class="lista">
+      <li>Alimentar la bomba a través de una fuente de potencia independiente y dos relés con transistor.</li>
+      <li>Implementar un tiempo máximo de riego por software (timeout) si el sensor no cambia de estado.</li>
+      <li>Colocar fusibles en la línea de alimentación principal.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== CRITERIOS DE ÉXITO ===================== -->
+<section id="criterios">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Criterios de éxito</h2>
+    <span class="num-tag">18</span>
+  </div>
+
+  <div class="bloques-lista">
+    <div class="bloque-item">
+      <span class="num">CRITERIO 1</span>
+      <h3>Exactitud y lectura de datos</h3>
+      <p>La humedad del suelo y las lecturas de temperatura/humedad ambiental deben registrarse de forma estable y renovarse periódicamente sin errores.</p>
+    </div>
+    <div class="bloque-item">
+      <span class="num">CRITERIO 2</span>
+      <h3>Respuesta y automatización</h3>
+      <p>La bomba se activa automáticamente solo bajo el umbral mínimo y se desactiva al alcanzar el límite superior o el tiempo de seguridad.</p>
+    </div>
+    <div class="bloque-item">
+      <span class="num">CRITERIO 3</span>
+      <h3>Estabilidad eléctrica</h3>
+      <p>La bomba no se alimenta desde los pines del Arduino; el sistema debe operar al menos 24 horas continuas sin bloquearse.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PLANTA ELEGIDA ===================== -->
+<section id="planta">
+  <div class="section-head">
+    <div class="bar"></div>
+    <h2>Planta elegida: chile habanero</h2>
+    <span class="num-tag">🌶</span>
+  </div>
+
+  <p>El chile habanero necesita luz solar directa, riego constante sin encharcar y un clima cálido para crecer sano y producir frutos picantes.</p>
+
+  <div class="bloques-lista" style="margin-top:1.2rem;">
+    <div class="bloque-item">
+      <h3>Luz y temperatura</h3>
+      <p>6 a 8 horas diarias de sol directo. Rango ideal entre 25°C y 30°C; no tolera heladas ni climas muy fríos. En calor extremo conviene semisombra en las horas más fuertes.</p>
+    </div>
+    <div class="bloque-item">
+      <h3>Riego y sustrato</h3>
+      <p>Tierra ligeramente húmeda; riego abundante solo cuando la capa superior comienza a secarse (puede requerir riego diario en días calurosos). Sustrato suelto y rico en nutrientes, con buen drenaje; maceta de al menos 20L y 30–40cm de profundidad.</p>
+    </div>
+  </div>
+
+  <div class="nota-clima">
+    Esto nos beneficia ya que donde vivimos es bastante caluroso.
+  </div>
+</section>
+
+<footer>
+  <span>CBTIS 144</span> · Especialidad de IA · 5°A · Invernadero Inteligente · 2026
+</footer>
+
+</body>
+</html>
