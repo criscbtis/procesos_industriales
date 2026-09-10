@@ -166,36 +166,33 @@
     <h2 class="titulo-seccion">02. Código de Control</h2>
     
     <!-- Bloque de código actualizado -->
-    <pre class="code-block"><code><span class="kw">#include</span> &lt;LiquidCrystal_I2C.h&gt;
-<span class="kw">#include</span> &lt;Wire.h&gt;
-
-LiquidCrystal_I2C lcd(0x27, 16, 2);
-<span class="kw">int</span> bomba_agua = 13;
+    <pre class="code-block"><code><span class="kw">int</span> lecturasensor;
+<span class="kw">int</span> ledv = 12;
 
 <span class="kw">void</span> <span class="fn">setup</span>() {
-  pinMode(bomba_agua, OUTPUT);
-  lcd.init();
-  lcd.backlight();
-  lcd.clear();
+  Serial.<span class="fn">begin</span>(9600);
+  pinMode(ledrojo, OUTPUT);
+  pinMode(ledv, OUTPUT);
 }
 
 <span class="kw">void</span> <span class="fn">loop</span>() {
-  digitalWrite(bomba_agua, LOW);
-  <span class="kw">int</span> valor = analogRead(A0);
-  
-  lcd.setCursor(0, 0);
-  lcd.print(valor);
-  delay(100);
-  
-  <span class="kw">if</span> (valor &lt; 200) {
-    digitalWrite(bomba_agua, HIGH);
+  lecturasensor = analogRead(A0);
+  Serial.<span class="fn">println</span>(lecturasensor);
+
+  <span class="kw">if</span> (lecturasensor &lt; 300) {
+    digitalWrite(ledrojo, HIGH);
+    digitalWrite(ledv, LOW);
+  }
+  <span class="kw">else if</span> (lecturasensor &gt; 500) {
+    digitalWrite(ledv, HIGH);
+    digitalWrite(ledrojo, LOW);
   }
 }</code></pre>
 
     <!-- Espacio reservado para la descripción -->
     <div class="descripcion-caja">
       <p><strong>Descripción del Código:</strong></p>
-      <p>Este programa controla la activación de una bomba de agua conectada al pin 13 mediante la lectura analógica de un sensor conectado al pin A0. Además, utiliza una pantalla LCD I2C (dirección 0x27) para mostrar en tiempo real la lectura obtenida. Si el valor analógico es menor a 200, la bomba de agua se activa.</p>
+      <p>Este programa lee el valor analógico del pin A0 mediante un sensor y envía las lecturas a través del puerto serie. Según el valor leído, controla el encendido y apagado de dos LEDs (uno rojo y uno verde): si la lectura es menor a 300 se enciende el LED rojo, y si supera 500 se activa el LED verde.</p>
     </div>
   </section>
 
