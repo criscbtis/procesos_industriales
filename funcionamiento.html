@@ -75,6 +75,11 @@
     border-radius: 4px;
   }
 
+  .diagrama-contenedor img {
+    max-width: 100%;
+    height: auto;
+  }
+
   /* --- PARTE 2: CÓDIGO Y DESCRIPCIÓN --- */
   .code-block {
     background: #000;
@@ -152,8 +157,7 @@
 
     <!-- Espacio para el diagrama abajo -->
     <div class="diagrama-contenedor">
-      <!-- Puedes reemplazar este SVG o insertar una etiqueta <img> con tu diagrama -->
-     <img src="https://github.com/criscbtis/procesos_industriales/blob/main/diagrama_agua.png?raw=true" alt="Invernadero Inteligente">
+      <img src="https://github.com/criscbtis/procesos_industriales/blob/main/diagrama_agua.png?raw=true" alt="Invernadero Inteligente">
     </div>
   </section>
 
@@ -161,41 +165,37 @@
   <section class="seccion">
     <h2 class="titulo-seccion">02. Código de Control</h2>
     
-    <!-- Bloque de código -->
-    <pre class="code-block"><code><span class="cm">// Control Automatizado - Invernadero Inteligente</span>
-<span class="kw">#include</span> &lt;DHT.h&gt;
+    <!-- Bloque de código actualizado -->
+    <pre class="code-block"><code><span class="kw">#include</span> &lt;LiquidCrystal_I2C.h&gt;
+<span class="kw">#include</span> &lt;Wire.h&gt;
 
-<span class="kw">#define</span> DHTPIN 2
-<span class="kw">#define</span> DHTTYPE DHT11
-<span class="kw">#define</span> PIN_BOMBA 8
-<span class="kw">#define</span> PIN_VENTILADOR 9
-
-DHT dht(DHTPIN, DHTTYPE);
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+<span class="kw">int</span> bomba_agua = 13;
 
 <span class="kw">void</span> <span class="fn">setup</span>() {
-  pinMode(PIN_BOMBA, OUTPUT);
-  pinMode(PIN_VENTILADOR, OUTPUT);
-  dht.begin();
+  pinMode(bomba_agua, OUTPUT);
+  lcd.init();
+  lcd.backlight();
+  lcd.clear();
 }
 
 <span class="kw">void</span> <span class="fn">loop</span>() {
-  <span class="kw">float</span> temp = dht.readTemperature();
-  <span class="kw">int</span> humedadSuelo = analogRead(A0);
-
-  <span class="cm">// Lógica de control de temperatura</span>
-  <span class="kw">if</span> (temp > 30.0) {
-    digitalWrite(PIN_VENTILADOR, HIGH);
-  } <span class="kw">else</span> {
-    digitalWrite(PIN_VENTILADOR, LOW);
+  digitalWrite(bomba_agua, LOW);
+  <span class="kw">int</span> valor = analogRead(A0);
+  
+  lcd.setCursor(0, 0);
+  lcd.print(valor);
+  delay(100);
+  
+  <span class="kw">if</span> (valor &lt; 200) {
+    digitalWrite(bomba_agua, HIGH);
   }
-
-  delay(1000);
 }</code></pre>
 
     <!-- Espacio reservado para la descripción -->
     <div class="descripcion-caja">
       <p><strong>Descripción del Código:</strong></p>
-      <p>Escribe aquí la explicación detallada del funcionamiento del código, librerías utilizadas, asignación de pines y la lógica de programación implementada para las lecturas del microcontrolador.</p>
+      <p>Este programa controla la activación de una bomba de agua conectada al pin 13 mediante la lectura analógica de un sensor conectado al pin A0. Además, utiliza una pantalla LCD I2C (dirección 0x27) para mostrar en tiempo real la lectura obtenida. Si el valor analógico es menor a 200, la bomba de agua se activa.</p>
     </div>
   </section>
 
@@ -207,14 +207,12 @@ DHT dht(DHTPIN, DHTTYPE);
       <!-- Imagen alusiva en la parte superior -->
       <div class="media-box">
         <div class="media-title">ILUSTRACIÓN / CONCEPTO DEL INVERNADERO INTELIGENTE</div>
-        <!-- Reemplaza "imagen_invernadero.jpg" por la ruta de tu imagen -->
         <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=1000&q=80" alt="Invernadero Inteligente">
       </div>
 
       <!-- Video demostrativo en la parte inferior -->
       <div class="media-box">
         <div class="media-title">DEMOSTRACIÓN DE FUNCIONAMIENTO DEL CIRCUITO</div>
-        <!-- Reemplaza "video_circuito.mp4" por la ruta de tu video -->
         <video controls poster="https://github.com/criscbtis/procesos_industriales/blob/main/diagrama_agua.png?raw=true">
           <source src="1_card/motor_y_sensor.mp4" type="video/mp4">
           Tu navegador no soporta la reproducción de video.
