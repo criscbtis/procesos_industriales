@@ -166,36 +166,65 @@
     <h2 class="titulo-seccion">02. Código de Control</h2>
     
     <!-- Bloque de código actualizado -->
-    <pre class="code-block"><code><span class="kw">#include</span> &lt;LiquidCrystal_I2C.h&gt;
-<span class="kw">#include</span> &lt;Wire.h&gt;
+    <pre class="code-block"><code><span class="cm">//L3.0</span>
+<span class="cm">//incluimos las librerias que se utilizaran</span>
 
-LiquidCrystal_I2C lcd(0x27, 16, 2);
-<span class="kw">int</span> bomba_agua = 13;
+<span class="kw">#include</span> &lt;Wire.h&gt;
+<span class="kw">#include</span> &lt;LiquidCrystal_I2C.h&gt;
+<span class="kw">#include</span> &lt;DHT.h&gt;
+
+<span class="cm">//pines que usaremos</span>
+<span class="kw">int</span> pin = 3;
+<span class="kw">int</span> ventilador = 6;
+
+DHT <span class="fn">dht</span>(pin, DHT11); <span class="cm">//pin que se usara y tipo de sensor dht</span>
+LiquidCrystal_I2C <span class="fn">lcd</span>(0x27, 16, 2); <span class="cm">//0x27,16,2</span>
 
 <span class="kw">void</span> <span class="fn">setup</span>() {
-  pinMode(bomba_agua, OUTPUT);
+  pinMode(ventilador, OUTPUT);
+  dht.begin();
   lcd.init();
   lcd.backlight();
   lcd.clear();
 }
 
 <span class="kw">void</span> <span class="fn">loop</span>() {
-  digitalWrite(bomba_agua, LOW);
-  <span class="kw">int</span> valor = analogRead(A0);
+  <span class="cm">//leemos los datos de los sensores</span>
+  <span class="kw">int</span> h = dht.readHumidity();
+  <span class="kw">int</span> t = dht.readTemperature();
   
-  lcd.setCursor(0, 0);
-  lcd.print(valor);
-  delay(100);
-  
-  <span class="kw">if</span> (valor &lt; 200) {
-    digitalWrite(bomba_agua, HIGH);
+  <span class="kw">if</span> (isnan(h) || isnan(t)) { <span class="cm">//verificamos si los valores no son numeros</span>
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(<span class="cm">"error de lectura"</span>); <span class="cm">//avisamos al usuario que hubo un error</span>
   }
+  <span class="kw">else</span> {
+    lcd.clear(); <span class="cm">//limpiamos la pantalla</span>
+
+    lcd.setCursor(0, 0); <span class="cm">//le decimos a la pantalla que lo va a imprimir en la fila 0 y columna 0</span>
+    lcd.print(<span class="cm">"temp:"</span>); <span class="cm">//imprimimos la temperatura</span>
+    lcd.print(t);
+    lcd.print(<span class="cm">"c"</span>); <span class="cm">//el resultado es temp:(valor leido por el sensor)c</span>
+
+    lcd.print(<span class="cm">" hum:"</span>); <span class="cm">//imprimimos la humedad</span>
+    lcd.print(h);
+    lcd.print(<span class="cm">"%"</span>); <span class="cm">//el resultado es hum:(valor leido por el sensor)%</span>
+  }
+
+  <span class="kw">if</span> (t &gt; 30) { <span class="cm">//si la temperatura supera los 30°C se enciende el ventilador</span>
+    digitalWrite(ventilador, 1);
+  }
+  <span class="kw">else</span> { 
+    digitalWrite(ventilador, 0);
+  }
+
+  delay(1000);
 }</code></pre>
 
     <!-- Espacio reservado para la descripción -->
     <div class="descripcion-caja">
       <p><strong>Descripción del Código:</strong></p>
-      <p>Este programa controla la activación de una bomba de agua conectada al pin 13 mediante la lectura analógica de un sensor conectado al pin A0. Además, utiliza una pantalla LCD I2C (dirección 0x27) para mostrar en tiempo real la lectura obtenida. Si el valor analógico es menor a 200, la bomba de agua se activa.</p>
+      <p>Este programa utiliza un sensor DHT11 para monitorear la temperatura y la humedad relativa en tiempo real. Muestra estas lecturas en una pantalla LCD I2C y, en caso de fallo en el sensor, despliega un mensaje de error. Si la temperatura supera un umbral establecido, activa un ventilador a través del pin digital 6 para regular las condiciones ambientales.</p>
     </div>
   </section>
 
